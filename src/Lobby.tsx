@@ -23,6 +23,7 @@ const Lobby = () => {
         {
           displayName: user.data.displayName,
           email: user.data.email,
+          uid: user.data.uid,
           ready: false
         });
     },
