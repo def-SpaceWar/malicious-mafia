@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "malicious-mafia",
     "public": "dist",
     "ignore": [
       "firebase.json",
