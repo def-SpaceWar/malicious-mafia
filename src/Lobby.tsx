@@ -8,7 +8,7 @@ const Lobby = () => {
     firestore = useFirestore(),
     lobbyCollection = collection(firestore, "lobby"),
     lobby = useFirestoreCollectionData(lobbyCollection),
-    gameCollection = collection(firestore, "game"),
+    gameCollection = collection(firestore, "gamePlayers"),
     game = useFirestoreCollectionData(gameCollection);
 
   const
