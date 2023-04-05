@@ -1,16 +1,20 @@
 import { Box, Text, Button } from "@chakra-ui/react";
 import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { useFirestore, useFirestoreCollectionData, useUser } from "reactfire";
+import Game from "./Game";
 
 const Lobby = () => {
   const
     firestore = useFirestore(),
     lobbyCollection = collection(firestore, "lobby"),
-    lobby = useFirestoreCollectionData(lobbyCollection);
+    lobby = useFirestoreCollectionData(lobbyCollection),
+    gameCollection = collection(firestore, "game"),
+    game = useFirestoreCollectionData(gameCollection);
 
   const
     user = useUser(),
-    userInLobby = lobby.data?.find(m => m.email === user.data?.email);
+    userInLobby = lobby.data?.find(m => m.email === user.data?.email),
+    userInGame = game.data?.find(m => m.email == user.data?.email);
 
   const
     joinLobby = async () => {
@@ -43,6 +47,11 @@ const Lobby = () => {
       });
       return count;
     };
+
+  if (userInGame) {
+    leaveLobby()
+    return <Game />
+  }
 
   return (
     <Box padding="50px">
