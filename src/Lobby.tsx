@@ -11,6 +11,13 @@ const Lobby = () => {
 
   return (
     <Box padding="50px">
+       {
+        (user.data)
+        ? <Text fontSize="3xl">You: {user.data.displayName}, {user.data.email}, {user.data.uid}</Text>
+        : <Text fontSize="3xl">You're not logged in!</Text>
+      }
+      <br />
+      <Text fontSize="5xl">Lobby:</Text>
       {
         (lobby.data)
         ? lobby.data.map(m => {
@@ -20,12 +27,7 @@ const Lobby = () => {
         })
         : <Text fontSize="3xl">Loading...</Text>
       }
-      {
-        (user.data)
-        ? <Text fontSize="3xl">You: {user.data.displayName}, {user.data.email}, {user.data.uid}</Text>
-        : <Text fontSize="3xl">You're not logged in!</Text>
-      }
-    </Box>
+     </Box>
   );
 };
 
