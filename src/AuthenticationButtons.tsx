@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
 import { useState } from 'react';
 import { useAuth } from "reactfire";
 
@@ -19,6 +19,9 @@ const AuthenticationButtons = () => {
       setSignedIn(!!auth.currentUser);
     };
 
+  onAuthStateChanged(auth, (user) => {
+    setSignedIn(!!user);
+  })
 
   return (
     signedIn

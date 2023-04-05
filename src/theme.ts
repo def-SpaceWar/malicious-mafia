@@ -49,7 +49,8 @@ export const theme = extendTheme({
                 color: "fg",
             },
             button: {
-                color: "bg"
+                color: "bg",
+                fontSize: "3xl"
             }
         }
     }
