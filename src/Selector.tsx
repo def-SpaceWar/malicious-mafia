@@ -41,6 +41,7 @@ const KillSelector = () => {
   let target = selectedTarget;
 
   gamePlayers.data?.map((m) => {
+    if (m.dead) return;
     if (m.role == "mafia") {
       if (m.selectedTarget != undefined && m.uid == auth.currentUser?.uid) {
         target = m.selectedTarget;
@@ -66,8 +67,8 @@ const KillSelector = () => {
             : (ready)
               ? <Button
                 fontSize="6xl" padding="40px"
-                bgColor="darkGreen"
-                _hover={{ bgColor: "darkGreen" }}
+                bgColor={(target == p) ? "darkRed" : "darkGreen"}
+                _hover={{ bgColor: (target == p) ? "darkRed" : "darkGreen" }}
                 isDisabled>
                 {p}</Button>
               : <Button
@@ -134,6 +135,7 @@ const ProtectSelector = () => {
   let target = selectedTarget;
 
   gamePlayers.data?.map((m) => {
+    if (m.dead) return;
     if (m.uid == auth.currentUser?.uid) {
       if (m.selectedTarget != undefined) {
         target = m.selectedTarget;
@@ -157,8 +159,8 @@ const ProtectSelector = () => {
             : (ready)
               ? <Button
                 fontSize="6xl" padding="40px"
-                bgColor="darkRed"
-                _hover={{ bgColor: "darkRed" }}
+                bgColor={(target == p) ? "darkCyan" : "darkRed"}
+                _hover={{ bgColor: (target == p) ? "darkCyan" : "darkRed" }}
                 isDisabled>
                 {p}</Button>
               : <Button
@@ -194,7 +196,105 @@ const ProtectSelector = () => {
 };
 
 const VoteSelector = () => {
-  return <></>;
+  const
+    auth = useAuth(),
+    firestore = useFirestore(),
+    gamePlayersCollection = collection(firestore, "gamePlayers"),
+    gamePlayers = useFirestoreCollectionData(gamePlayersCollection);
+
+  let ready = false;
+  const
+    playerList: string[] = [],
+    [selectedTarget, setSelectedTarget] = useState<string | undefined>(undefined),
+    saveSelection = () => {
+      setDoc(doc(firestore, "gamePlayers", auth.currentUser!.uid), {
+        selectedTarget
+      }, { merge: true });
+    };
+
+  let target = selectedTarget;
+
+  gamePlayers.data?.map((m) => {
+    if (m.dead) return;
+    if (m.uid == auth.currentUser?.uid) {
+      if (m.selectedTarget != undefined) {
+        target = m.selectedTarget;
+        ready = true;
+      }
+    }
+    playerList.push(m.name);
+  });
+
+  return (
+    <Flex flexDir="column">
+      {
+        playerList.map((p) =>
+          (target == p && !ready)
+            ? <Button
+              fontSize="6xl" padding="40px"
+              bgColor="red"
+              _hover={{ bgColor: "red" }}
+              isDisabled>
+              {p}</Button>
+            : (ready)
+              ? <Button
+                fontSize="6xl" padding="40px"
+                bgColor={(target == p) ? "darkRed" : "darkYellow"}
+                _hover={{ bgColor: (target == p) ? "darkRed" : "darkYellow" }}
+                isDisabled>
+                {p}</Button>
+              : <Button
+                fontSize="6xl" padding="40px"
+                bgColor="yellow"
+                _hover={{ bgColor: "lightYellow" }}
+                onClick={() => setSelectedTarget(p)}>
+                {p}</Button>
+        )
+      }
+      {
+        (target == "skip" && !ready)
+          ? <Button
+            fontSize="6xl" padding="40px"
+            bgColor="red"
+            _hover={{ bgColor: "red" }}
+            isDisabled>
+            skip</Button>
+          : (ready)
+            ? <Button
+              fontSize="6xl" padding="40px"
+              bgColor={(target == "skip") ? "darkRed" : "darkYellow"}
+              _hover={{ bgColor: (target == "skip") ? "darkRed" : "darkYellow" }}
+              isDisabled>
+              skip</Button>
+            : <Button
+              fontSize="6xl" padding="40px"
+              bgColor="yellow"
+              _hover={{ bgColor: "lightYellow" }}
+              onClick={() => setSelectedTarget("skip")}>
+              skip</Button>
+      }
+      {
+        (ready)
+          ?
+          <Button
+            marginTop="25px"
+            fontSize="6xl" padding="40px"
+            bgColor="darkMagenta"
+            _hover={{ bgColor: "darkMagenta" }}
+            isDisabled>
+            Finalize!</Button>
+          : (target == undefined)
+            ? <></>
+            : <Button
+              marginTop="25px"
+              fontSize="6xl" padding="40px"
+              bgColor="magenta"
+              _hover={{ bgColor: "lightMagenta" }}
+              onClick={saveSelection}>
+              Finalize!</Button>
+      }
+    </Flex>
+  );
 };
 
 const Selector = ({ role, timeOfDay }: SelectorProps) => {

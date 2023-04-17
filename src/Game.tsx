@@ -81,23 +81,29 @@ const Game = () => {
     gameDataCollection = collection(firestore, "gameData"),
     gameData = useFirestoreCollectionData(gameDataCollection);
 
-  let
-    role: Role = "villager",
-    association: Association = "innocent";
-
-  gamePlayers.data.map((m) => {
-    if (m.uid == auth.currentUser?.uid) {
-      role = m.role as Role;
-      association = m.association as Association;
-    }
-  });
-
-  let
-    timeOfDay: TimeOfDay = "night";
-
-  gameData.data?.map((m) => {
-    timeOfDay = m.timeOfDay as TimeOfDay;
-  })
+  const
+    timeOfDay: TimeOfDay =
+      gameData.data?.reduce((d, m) =>
+        m.timeOfDay || d
+        , "night"),
+    role: Role =
+      gamePlayers.data?.reduce((d, m) =>
+        (m.uid == auth.currentUser?.uid)
+          ? m.role
+          : d
+        , "villager"),
+    association: Association =
+      gamePlayers.data?.reduce((d, m) =>
+        (m.uid == auth.currentUser?.uid)
+          ? m.association
+          : d
+        , "innocent"),
+    dead: boolean =
+      gamePlayers.data?.reduce((d, m) =>
+        (m.uid == auth.currentUser?.uid)
+          ? m.dead
+          : d
+        , false);
 
   return (
     <>
@@ -105,7 +111,11 @@ const Game = () => {
         width="100vw"
         height="80vh"
         alignItems="center" justifyContent="center">
-        <Selector role={role} timeOfDay={timeOfDay} />
+        {
+          (!dead)
+            ? <Selector role={role} timeOfDay={timeOfDay} />
+            : <Text>You are dead!</Text>
+        }
       </Flex>
       <Flex
         width="100vw"

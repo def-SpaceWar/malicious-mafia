@@ -39,19 +39,23 @@ const Lobby = () => {
         }, { merge: true });
     },
     amountReady = (): number => {
-      if (!lobby.data) return 0;
-      let count = 0;
-      lobby.data.map((m) => {
-        if (m.ready === true) {
-          count += 1;
-        }
-      });
-      return count;
+      //if (!lobby.data) return 0;
+      //let count = 0;
+      //lobby.data.map((m) => {
+      //  if (m.ready === true) {
+      //    count += 1;
+      //  }
+      //});
+      //return count;
+      return lobby.data?.reduce((count, m) =>
+        (m.ready === true)
+          ? count + 1
+          : count
+        , 0) || 0;
     };
 
   if (userInGame) {
-    leaveLobby()
-    return <Game />
+    return <Game />;
   }
 
   return (
