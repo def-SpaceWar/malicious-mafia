@@ -1,9 +1,11 @@
-import { Flex, Text } from "@chakra-ui/react"
+import { Flex, Text, Spacer, Heading } from "@chakra-ui/react"
 import { collection } from "firebase/firestore";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
+import Selector from "./Selector";
 
-type Role = "villager" | "guardian" | "mafia" | "jester";
-type Association = "innocent" | "mafia" | "third-party";
+export type Role = "villager" | "guardian" | "mafia" | "jester";
+export type Association = "innocent" | "mafia" | "third-party";
+export type TimeOfDay = "night" | "day";
 
 const
   capitalizeRole = (r: Role): string => {
@@ -45,6 +47,28 @@ const
         : (a == "third-party")
           ? "purple"
           : "#ff0000";
+  },
+  capitalizeTimeOfDay = (t: TimeOfDay): string => {
+    return (t == "night")
+      ? "Night"
+      : (t == "day")
+        ? "Day"
+        : "Invalid";
+  },
+  timeOfDayToColor = (t: TimeOfDay): string => {
+    return (t == "night")
+      ? "darkBlue"
+      : (t == "day")
+        ? "lightYellow"
+        : "#ff0000";
+  },
+  getMessage = (t: TimeOfDay, role: Role) => {
+    if (t == "night" && role == "mafia") return "Choose someone to kill.";
+    if (t == "night" && role == "guardian") return "Choose someone to protect.";
+    if (t == "night") return "Hope you don't die!";
+
+    if (t == "day" && role == "jester") return "You already voted yourself."
+    if (t == "day") return "Vote someone.";
   };
 
 
@@ -53,7 +77,9 @@ const Game = () => {
     auth = useAuth(),
     firestore = useFirestore(),
     gamePlayersCollection = collection(firestore, "gamePlayers"),
-    gamePlayers = useFirestoreCollectionData(gamePlayersCollection);
+    gamePlayers = useFirestoreCollectionData(gamePlayersCollection),
+    gameDataCollection = collection(firestore, "gameData"),
+    gameData = useFirestoreCollectionData(gameDataCollection);
 
   let
     role: Role = "villager",
@@ -66,14 +92,31 @@ const Game = () => {
     }
   });
 
+  let
+    timeOfDay: TimeOfDay = "night";
+
+  gameData.data?.map((m) => {
+    timeOfDay = m.timeOfDay as TimeOfDay;
+  })
+
   return (
     <>
       <Flex
         width="100vw"
-        top="90vh" height="10vh"
-        alignItems="center" position="absolute"
+        height="80vh"
+        alignItems="center" justifyContent="center">
+        <Selector role={role} timeOfDay={timeOfDay} />
+      </Flex>
+      <Flex
+        width="100vw"
+        height="10vh"
+        alignItems="center"
         padding="30px" bgColor="darkBg"
         columnGap="30px">
+        <Heading fontSize="4xl" color={timeOfDayToColor(timeOfDay)}>{capitalizeTimeOfDay(timeOfDay)}</Heading>
+        <Spacer />
+        <Text fontSize="4xl">{getMessage(timeOfDay, role)}</Text>
+        <Spacer />
         <Text fontSize="4xl" color={roleToColor(role)}>{capitalizeRole(role)}</Text>
         <Text fontSize="4xl" color={associationToColor(association)}>{capitalizeAssociation(association)}</Text>
       </Flex>
