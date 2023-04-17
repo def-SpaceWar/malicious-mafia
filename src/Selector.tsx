@@ -25,7 +25,10 @@ const KillSelector = () => {
       gamePlayers.data?.map((m) => {
         if (m.name == auth.currentUser?.displayName) return;
         if (m.role != "mafia") return;
-        if (m.selectedTarget == name) hasBeenSelected = true;
+        if (m.selectedTarget == name) {
+          if (selectedTarget == m.selectedTarget) setSelectedTarget(undefined);
+          hasBeenSelected = true;
+        }
       });
       return hasBeenSelected;
     },
@@ -110,12 +113,15 @@ const ProtectSelector = () => {
   const
     playerList: string[] = [],
     [selectedTarget, setSelectedTarget] = useState<string | undefined>(undefined),
-    otherMafiaChose = (name: string) => {
+    otherGuardianChose = (name: string) => {
       let hasBeenSelected = false;
       gamePlayers.data?.map((m) => {
         if (m.name == auth.currentUser?.displayName) return;
-        if (m.role != "mafia") return;
-        if (m.selectedTarget == name) hasBeenSelected = true;
+        if (m.role != "guardian") return;
+        if (m.selectedTarget == name) {
+          if (selectedTarget == m.selectedTarget) setSelectedTarget(undefined);
+          hasBeenSelected = true;
+        }
       });
       return hasBeenSelected;
     },
@@ -141,7 +147,7 @@ const ProtectSelector = () => {
     <Flex flexDir="column">
       {
         playerList.map((p) =>
-          (target == p || otherMafiaChose(p))
+          (target == p || otherGuardianChose(p))
             ? <Button
               fontSize="6xl" padding="40px"
               bgColor="darkCyan"
