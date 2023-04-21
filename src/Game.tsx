@@ -5,7 +5,7 @@ import GameOver from "./GameOver";
 import PlayerList from "./PlayerList";
 import Selector from "./Selector";
 
-export type Role = "villager" | "guardian" | "mafia" | "jester" | "mayor";
+export type Role = "villager" | "guardian" | "mafia" | "jester" | "mayor" | "assasin";
 export type Association = "innocent" | "mafia" | "third-party";
 export type TimeOfDay = "night" | "day";
 
@@ -21,7 +21,9 @@ export const
             ? "Jester"
             : (r == "mayor")
               ? "Mayor"
-              : "Invalid";
+              : (r == "assasin")
+                ? "Assasin"
+                : "Invalid";
   },
   roleToColor = (r: Role): string => {
     return (r == "villager")
@@ -34,7 +36,9 @@ export const
             ? "magenta"
             : (r == "mayor")
               ? "yellow"
-              : "#ff0000";
+              : (r == "assasin")
+                ? "darkRed"
+                : "#ff0000";
   },
   capitalizeAssociation = (a: Association): string => {
     return (a == "innocent")
@@ -122,7 +126,10 @@ const Game = () => {
         , "tie") || "tie",
     message: string = gameData.data?.reduce((msg, m) =>
       m.message ? m.message : msg
-      , "");
+      , ""),
+    roundNumber: number = gameData.data?.reduce((num, m) =>
+      m.roundNumber ? m.roundNumber : num
+      , 0) || 0;
 
   return (
     <>
@@ -141,7 +148,7 @@ const Game = () => {
                 <Flex width="80vw" height="80vh" alignItems="center" justifyContent="center">
                   {
                     (!dead)
-                      ? <Selector role={role} timeOfDay={timeOfDay} />
+                      ? <Selector role={role} timeOfDay={timeOfDay} roundNumber={roundNumber} />
                       : <PlayerList players={gamePlayers.data} />
                   }
                 </Flex>

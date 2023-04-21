@@ -5,8 +5,9 @@ import { Role, TimeOfDay } from "./Game";
 import { useState } from "react";
 
 type SelectorProps = {
-  role: Role,
-  timeOfDay: TimeOfDay
+  role: Role;
+  timeOfDay: TimeOfDay;
+  roundNumber: number;
 };
 
 const KillSelector = () => {
@@ -24,7 +25,7 @@ const KillSelector = () => {
       let hasBeenSelected = false;
       gamePlayers.data?.map((m) => {
         if (m.name == auth.currentUser?.displayName) return;
-        if (m.role != "mafia") return;
+        if (m.association != "mafia") return;
         if (m.selectedTarget == name) {
           if (selectedTarget == m.selectedTarget) setSelectedTarget(undefined);
           hasBeenSelected = true;
@@ -297,8 +298,9 @@ const VoteSelector = () => {
   );
 };
 
-const Selector = ({ role, timeOfDay }: SelectorProps) => {
+const Selector = ({ role, timeOfDay, roundNumber }: SelectorProps) => {
   if (timeOfDay == "night" && role == "mafia") return <KillSelector />;
+  if (timeOfDay == "night" && role == "assasin" && roundNumber % 2 == 0) return <KillSelector />;
   if (timeOfDay == "night" && role == "guardian") return <ProtectSelector />;
   if (timeOfDay == "day" && role != "jester") return <VoteSelector />;
   return <></>;
