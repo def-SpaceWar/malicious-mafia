@@ -115,7 +115,7 @@ const Game = () => {
         height="80vh"
         alignItems="center" justifyContent="center">
         <Flex width="20vw" height="80vh" bgColor="darkBg" alignItems="center" justifyContent="center" padding="20px">
-          <Heading fontSize="3xl" textAlign="center">{gameData.data!.reduce((msg, m) => m.message ? m.message : msg, "")}</Heading>
+          <Heading fontSize="3xl" textAlign="center">{gameData.data?.reduce((msg, m) => m.message ? m.message : msg, "")}</Heading>
         </Flex>
         <Flex width="80vw" height="80vh" alignItems="center" justifyContent="center">
           {
