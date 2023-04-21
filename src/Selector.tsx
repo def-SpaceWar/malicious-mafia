@@ -43,7 +43,7 @@ const KillSelector = () => {
 
   gamePlayers.data?.map((m) => {
     if (m.dead) return;
-    if (m.role == "mafia") {
+    if (m.association == "mafia") {
       if (m.selectedTarget != undefined && m.uid == auth.currentUser?.uid) {
         target = m.selectedTarget;
         ready = true;
