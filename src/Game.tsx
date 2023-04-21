@@ -1,13 +1,14 @@
 import { Flex, Text, Spacer, Heading } from "@chakra-ui/react"
 import { collection } from "firebase/firestore";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
+import PlayerList from "./PlayerList";
 import Selector from "./Selector";
 
 export type Role = "villager" | "guardian" | "mafia" | "jester";
 export type Association = "innocent" | "mafia" | "third-party";
 export type TimeOfDay = "night" | "day";
 
-const
+export const
   capitalizeRole = (r: Role): string => {
     return (r == "villager")
       ? "Villager"
@@ -62,7 +63,9 @@ const
         ? "lightYellow"
         : "#ff0000";
   },
-  getMessage = (t: TimeOfDay, role: Role) => {
+  getMessage = (t: TimeOfDay, role: Role, dead: boolean) => {
+    if (dead) return "You are dead! Witness the chaos!";
+
     if (t == "night" && role == "mafia") return "Choose someone to kill.";
     if (t == "night" && role == "guardian") return "Choose someone to protect.";
     if (t == "night") return "Hope you don't die!";
@@ -111,11 +114,16 @@ const Game = () => {
         width="100vw"
         height="80vh"
         alignItems="center" justifyContent="center">
-        {
-          (!dead)
-            ? <Selector role={role} timeOfDay={timeOfDay} />
-            : <Text>You are dead!</Text>
-        }
+        <Flex width="20vw" height="80vh" bgColor="darkBg" alignItems="center" justifyContent="center" padding="20px">
+          <Heading fontSize="3xl" textAlign="center">{gameData.data!.reduce((msg, m) => m.message ? m.message : msg, "")}</Heading>
+        </Flex>
+        <Flex width="80vw" height="80vh" alignItems="center" justifyContent="center">
+          {
+            (!dead)
+              ? <Selector role={role} timeOfDay={timeOfDay} />
+              : <PlayerList players={gamePlayers.data} />
+          }
+        </Flex>
       </Flex>
       <Flex
         width="100vw"
@@ -125,7 +133,7 @@ const Game = () => {
         columnGap="30px">
         <Heading fontSize="4xl" color={timeOfDayToColor(timeOfDay)}>{capitalizeTimeOfDay(timeOfDay)}</Heading>
         <Spacer />
-        <Text fontSize="4xl">{getMessage(timeOfDay, role)}</Text>
+        <Text fontSize="4xl">{getMessage(timeOfDay, role, dead)}</Text>
         <Spacer />
         <Text fontSize="4xl" color={roleToColor(role)}>{capitalizeRole(role)}</Text>
         <Text fontSize="4xl" color={associationToColor(association)}>{capitalizeAssociation(association)}</Text>
