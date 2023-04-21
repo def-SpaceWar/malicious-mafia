@@ -22,7 +22,7 @@ export const
             : (r == "mayor")
               ? "Mayor"
               : (r == "assasin")
-                ? "Assasin"
+                ? "Assassin"
                 : "Invalid";
   },
   roleToColor = (r: Role): string => {
