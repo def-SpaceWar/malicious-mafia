@@ -10,7 +10,7 @@ const PlayerList = ({ players }: PlayerListProps) => {
     <Flex direction="column" rowGap="25px">
       {
         players.map(player =>
-          <Heading fontSize="5xl" color={associationToColor(player.association)}>
+          <Heading fontSize="5xl" color={associationToColor(player.association)} textAlign="center">
             {player.name}: {capitalizeRole(player.role)}:{capitalizeAssociation(player.association)}
             {(player.dead) ? ", Dead" : ""}
           </Heading>

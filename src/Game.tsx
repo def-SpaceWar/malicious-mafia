@@ -1,6 +1,7 @@
 import { Flex, Text, Spacer, Heading } from "@chakra-ui/react"
 import { collection } from "firebase/firestore";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
+import GameOver from "./GameOver";
 import PlayerList from "./PlayerList";
 import Selector from "./Selector";
 
@@ -106,7 +107,18 @@ const Game = () => {
         (m.uid == auth.currentUser?.uid)
           ? m.dead
           : d
-        , false);
+        , false),
+    gameOver: boolean =
+      gameData.data?.reduce((gameOver, m) =>
+        m.gameOver ? m.gameOver : gameOver
+        , false),
+    winner: string =
+      gameData.data?.reduce((winner, m) =>
+        m.winner ? m.winner : winner
+        , "tie") || "tie",
+    message: string = gameData.data?.reduce((msg, m) =>
+      m.message ? m.message : msg
+      , "");
 
   return (
     <>
@@ -114,16 +126,24 @@ const Game = () => {
         width="100vw"
         height="80vh"
         alignItems="center" justifyContent="center">
-        <Flex width="20vw" height="80vh" bgColor="darkBg" alignItems="center" justifyContent="center" padding="20px">
-          <Heading fontSize="3xl" textAlign="center">{gameData.data?.reduce((msg, m) => m.message ? m.message : msg, "")}</Heading>
-        </Flex>
-        <Flex width="80vw" height="80vh" alignItems="center" justifyContent="center">
-          {
-            (!dead)
-              ? <Selector role={role} timeOfDay={timeOfDay} />
-              : <PlayerList players={gamePlayers.data} />
-          }
-        </Flex>
+        {
+          (gameOver)
+            ? <GameOver players={gamePlayers.data} winner={winner} message={message} />
+            : (
+              <>
+                <Flex width="20vw" height="80vh" bgColor="darkBg" alignItems="center" justifyContent="center" padding="20px">
+                  <Heading fontSize="3xl" textAlign="center">{message}</Heading>
+                </Flex>
+                <Flex width="80vw" height="80vh" alignItems="center" justifyContent="center">
+                  {
+                    (!dead)
+                      ? <Selector role={role} timeOfDay={timeOfDay} />
+                      : <PlayerList players={gamePlayers.data} />
+                  }
+                </Flex>
+              </>
+            )
+        }
       </Flex>
       <Flex
         width="100vw"
