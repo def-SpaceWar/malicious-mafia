@@ -17,7 +17,7 @@ const GameOver = ({ players, winner, message }: GameOverProps) => {
       <Heading color={color} fontSize="7xl" marginBottom="25px" textAlign="center">{message}</Heading>
       {
         players.map(player =>
-          <Heading fontSize="5xl" color={associationToColor(player.association)} textAlign="center">
+          <Heading fontSize="5xl" color={roleToColor(player.role)} textAlign="center">
             {player.name}: {capitalizeRole(player.role)}:{capitalizeAssociation(player.association)}
           </Heading>
         )
