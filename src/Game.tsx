@@ -5,7 +5,7 @@ import GameOver from "./GameOver";
 import PlayerList from "./PlayerList";
 import Selector from "./Selector";
 
-export type Role = "villager" | "guardian" | "mafia" | "jester";
+export type Role = "villager" | "guardian" | "mafia" | "jester" | "mayor";
 export type Association = "innocent" | "mafia" | "third-party";
 export type TimeOfDay = "night" | "day";
 
@@ -19,7 +19,9 @@ export const
           ? "Mafia"
           : (r == "jester")
             ? "Jester"
-            : "Invalid";
+            : (r == "mayor")
+              ? "Mayor"
+              : "Invalid";
   },
   roleToColor = (r: Role): string => {
     return (r == "villager")
@@ -30,7 +32,9 @@ export const
           ? "red"
           : (r == "jester")
             ? "magenta"
-            : "#ff0000";
+            : (r == "mayor")
+              ? "yellow"
+              : "#ff0000";
   },
   capitalizeAssociation = (a: Association): string => {
     return (a == "innocent")
