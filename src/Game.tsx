@@ -124,7 +124,7 @@ const Game = () => {
     <>
       <Flex
         width="100vw"
-        height="80vh"
+        height={(gameOver) ? "90vh" : "80vh"}
         alignItems="center" justifyContent="center">
         {
           (gameOver)
@@ -145,19 +145,23 @@ const Game = () => {
             )
         }
       </Flex>
-      <Flex
-        width="100vw"
-        height="10vh"
-        alignItems="center"
-        padding="30px" bgColor="darkBg"
-        columnGap="30px">
-        <Heading fontSize="4xl" color={timeOfDayToColor(timeOfDay)}>{capitalizeTimeOfDay(timeOfDay)}</Heading>
-        <Spacer />
-        <Text fontSize="4xl">{getMessage(timeOfDay, role, dead)}</Text>
-        <Spacer />
-        <Text fontSize="4xl" color={roleToColor(role)}>{capitalizeRole(role)}</Text>
-        <Text fontSize="4xl" color={associationToColor(association)}>{capitalizeAssociation(association)}</Text>
-      </Flex>
+      {
+        (!gameOver)
+          ? <Flex
+            width="100vw"
+            height="10vh"
+            alignItems="center"
+            padding="30px" bgColor="darkBg"
+            columnGap="30px">
+            <Heading fontSize="4xl" color={timeOfDayToColor(timeOfDay)}>{capitalizeTimeOfDay(timeOfDay)}</Heading>
+            <Spacer />
+            <Text fontSize="4xl">{getMessage(timeOfDay, role, dead)}</Text>
+            <Spacer />
+            <Text fontSize="4xl" color={roleToColor(role)}>{capitalizeRole(role)}</Text>
+            <Text fontSize="4xl" color={associationToColor(association)}>{capitalizeAssociation(association)}</Text>
+          </Flex>
+          : <></>
+      }
     </>
   );
 };
