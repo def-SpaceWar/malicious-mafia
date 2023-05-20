@@ -5,9 +5,12 @@ import GameOver from "./GameOver";
 import PlayerList from "./PlayerList";
 import Selector from "./Selector";
 
-export type Role = "villager" | "guardian" | "mafia" | "jester" | "mayor" | "assasin";
+export type Role = "villager"
+  | "guardian" | "mafia" | "jester"
+  | "mayor" | "assasin"
+  | "host" | "impostor" | "reflector";
 export type Association = "innocent" | "mafia" | "third-party";
-export type TimeOfDay = "night" | "day";
+export type TimeOfDay = "night" | "kingNight" | "hostNight" | "day" | "kingDay" | "hostDay";
 
 export const
   capitalizeRole = (r: Role): string => {
@@ -23,7 +26,13 @@ export const
               ? "Mayor"
               : (r == "assasin")
                 ? "Assassin"
-                : "Invalid";
+                : (r == "host")
+                  ? "Host"
+                  : (r == "impostor")
+                    ? "Impostor"
+                    : (r == "reflector")
+                      ? "Reflector"
+                      : "Invalid";
   },
   roleToColor = (r: Role): string => {
     return (r == "villager")
@@ -38,7 +47,13 @@ export const
               ? "yellow"
               : (r == "assasin")
                 ? "darkRed"
-                : "#ff0000";
+                : (r == "host")
+                  ? "fg"
+                  : (r == "impostor")
+                    ? "orange"
+                    : (r == "reflector")
+                      ? ""
+                      : "#ff0000";
   },
   capitalizeAssociation = (a: Association): string => {
     return (a == "innocent")
@@ -59,16 +74,16 @@ export const
           : "#ff0000";
   },
   capitalizeTimeOfDay = (t: TimeOfDay): string => {
-    return (t == "night")
+    return (t == "night" || t == "hostNight" || t == "kingNight")
       ? "Night"
-      : (t == "day")
+      : (t == "day" || t == "hostDay" || t == "kingDay")
         ? "Day"
         : "Invalid";
   },
   timeOfDayToColor = (t: TimeOfDay): string => {
-    return (t == "night")
+    return (t == "night" || t == "hostNight" || t == "kingNight")
       ? "darkBlue"
-      : (t == "day")
+      : (t == "day" || t == "hostDay" || t == "kingDay")
         ? "lightYellow"
         : "#ff0000";
   },
@@ -76,6 +91,7 @@ export const
     if (dead) return "You are dead! Witness the chaos!";
 
     if (t == "night" && role == "mafia") return "Choose someone to kill.";
+    if (t == "night" && role == "assasin") return "You kill every other round.";
     if (t == "night" && role == "guardian") return "Choose someone to protect.";
     if (t == "night") return "Hope you don't die!";
 

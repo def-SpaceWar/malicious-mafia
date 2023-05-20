@@ -40,7 +40,6 @@ const KillSelector = () => {
     };
 
   let target = selectedTarget;
-
   gamePlayers.data?.map((m) => {
     if (m.dead) return;
     if (m.association == "mafia") {
@@ -53,6 +52,13 @@ const KillSelector = () => {
     }
     playerList.push(m.name);
   });
+
+  let allOthersSelected = true;
+  playerList.map(p => {
+    if (!otherMafiaChose(p)) {
+      allOthersSelected = false;
+    }
+  })
 
   return (
     <Flex flexDir="column">
@@ -79,6 +85,24 @@ const KillSelector = () => {
                 onClick={() => setSelectedTarget(p)}>
                 {p}</Button>
         )
+      }
+      {
+        (allOthersSelected && selectedTarget != "$") ?
+          <Button
+            fontSize="6xl" padding="40px"
+            bgColor="green"
+            _hover={{ bgColor: "red" }}
+            onClick={() => setSelectedTarget("$")}>
+            Abstain</Button>
+          : (allOthersSelected)
+            ? <Button
+              fontSize="6xl" padding="40px"
+              bgColor="darkRed"
+              _hover={{ bgColor: "darkRed" }}
+              isDisabled>
+              Abstain
+            </Button>
+            : <></>
       }
       {
         (ready)

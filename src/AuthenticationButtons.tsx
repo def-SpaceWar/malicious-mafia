@@ -21,7 +21,7 @@ const AuthenticationButtons = () => {
 
   onAuthStateChanged(auth, (user) => {
     setSignedIn(!!user);
-  })
+  });
 
   return (
     signedIn
