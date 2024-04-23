@@ -19,6 +19,7 @@ const GameOver = ({ players, winner, message }: GameOverProps) => {
         players.map(player =>
           <Heading fontSize="5xl" color={roleToColor(player.role)} textAlign="center">
             {player.name}: {capitalizeRole(player.role)}:{capitalizeAssociation(player.association)}
+            {(player.dead) ? ", Dead" : ""}
           </Heading>
         )
       }

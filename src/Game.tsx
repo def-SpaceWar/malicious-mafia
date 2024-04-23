@@ -99,7 +99,6 @@ export const
     if (t == "day") return "Vote someone.";
   };
 
-
 const Game = () => {
   const
     auth = useAuth(),
@@ -145,7 +144,12 @@ const Game = () => {
       , ""),
     roundNumber: number = gameData.data?.reduce((num, m) =>
       m.roundNumber ? m.roundNumber : num
-      , 0) || 0;
+      , 0) || 0,
+    ign: string = gamePlayers.data?.reduce((n, m) =>
+      m.uid === auth.currentUser?.uid ? m.name : n
+      , "undefined"),
+    roleColor = roleToColor(role),
+    associationColor = associationToColor(association);
 
   return (
     <>
@@ -180,14 +184,33 @@ const Game = () => {
             alignItems="center"
             padding="30px" bgColor="darkBg"
             columnGap="30px">
-            <Heading fontSize="4xl" color={timeOfDayToColor(timeOfDay)}>{capitalizeTimeOfDay(timeOfDay)}</Heading>
+            <Heading
+              fontSize="4xl"
+              color={timeOfDayToColor(timeOfDay)}
+              title="Time Of Day"
+            >
+              {capitalizeTimeOfDay(timeOfDay)}
+            </Heading>
             <Spacer />
             <Text fontSize="4xl">{getMessage(timeOfDay, role, dead)}</Text>
             <Spacer />
-            <Text fontSize="4xl" color={roleToColor(role)}>{capitalizeRole(role)}</Text>
-            <Text fontSize="4xl" color={associationToColor(association)}>{capitalizeAssociation(association)}</Text>
+            <Text fontSize="4xl" color={roleColor} title="Role">
+              {capitalizeRole(role)}
+            </Text>
+            <Text
+              fontSize="4xl"
+              color={associationColor}
+              title="Association"
+            >{capitalizeAssociation(association)}</Text>
+            <Text
+              fontSize="4xl"
+              color={roleColor}
+              title="Your In-Game Name (IGN)"
+              textDecoration="underline double"
+              textDecorationColor={associationColor}
+            >{ign}</Text>
           </Flex>
-          : <></>
+          : <> </>
       }
     </>
   );

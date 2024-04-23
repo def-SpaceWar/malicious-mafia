@@ -14,8 +14,8 @@ const Lobby = () => {
 
   const
     user = useUser(),
-    userInLobby = lobby.data?.find(m => m.email === user.data?.email),
-    userInGame = game.data?.find(m => m.email == user.data?.email),
+    userInLobby = lobby.data?.find(m => m.uid === user.data?.uid),
+    userInGame = game.data?.find(m => m.uid == user.data?.uid),
     [customIgn, setCustomIgn] = useState("");
 
   const
@@ -24,7 +24,6 @@ const Lobby = () => {
       await setDoc(doc(firestore, "lobby", user.data.uid),
         {
           displayName: customIgn || user.data.displayName,
-          email: user.data.email,
           uid: user.data.uid,
           ready: false
         });
@@ -41,19 +40,17 @@ const Lobby = () => {
         }, { merge: true });
     },
     amountReady = (): number => {
-      //if (!lobby.data) return 0;
-      //let count = 0;
-      //lobby.data.map((m) => {
-      //  if (m.ready === true) {
-      //    count += 1;
-      //  }
-      //});
-      //return count;
       return lobby.data?.reduce((count, m) =>
         (m.ready === true)
           ? count + 1
           : count
         , 0) || 0;
+    },
+    getLobbyColor = (): string => {
+        const ready = amountReady();
+        if (ready == lobby.data?.length) return "lightGreen";
+        if (ready > 0) return "lightYellow";
+        return "lightRed";
     },
     someoneHasSameIGN = (): boolean => {
       if (!lobby.data || !user.data) return true;
@@ -71,7 +68,6 @@ const Lobby = () => {
       {
         (user.data)
           ? (<>
-            <Text fontSize="3xl">You: {user.data.displayName}, {user.data.email}, {user.data.uid}</Text>
             <Text fontSize="3xl">In-Game Name (IGN): <Input
               fontSize="3xl"
               color={userInLobby ? "green" : someoneHasSameIGN() ? "red" : "green"}
@@ -112,16 +108,21 @@ const Lobby = () => {
               >Join Lobby</Button>
             ) : <></>
       }
+      <br />
+      <br />
       {
         (lobby.data?.length > 0)
-          ? <Text fontSize="5xl">Lobby ({amountReady()}/{lobby.data.length}):</Text>
-          : <Text fontSize="5xl">Lobby:</Text>
+          ? <Text fontSize="5xl" color={getLobbyColor()}>Lobby ({amountReady()}/{lobby.data.length}):</Text>
+          : <Text fontSize="5xl" color="yellow">Lobby:</Text>
       }
       {
         (lobby.data)
           ? lobby.data.map(m => {
             return (
-              <Text fontSize="3xl">{m.displayName} {m.ready ? "- Ready" : "- Not Ready"}</Text>
+              <Text fontSize="3xl">{m.displayName} - {m.ready
+                ? <Text color="lightGreen" display="inline">Ready</Text>
+                : <Text color="lightRed" display="inline">Not Ready</Text>}
+              </Text>
             )
           })
           : <Text fontSize="3xl">Loading...</Text>
