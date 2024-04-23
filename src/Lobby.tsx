@@ -1,5 +1,6 @@
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Text, Button, Input } from "@chakra-ui/react";
 import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { useState } from "react";
 import { useFirestore, useFirestoreCollectionData, useUser } from "reactfire";
 import Game from "./Game";
 
@@ -14,14 +15,15 @@ const Lobby = () => {
   const
     user = useUser(),
     userInLobby = lobby.data?.find(m => m.email === user.data?.email),
-    userInGame = game.data?.find(m => m.email == user.data?.email);
+    userInGame = game.data?.find(m => m.email == user.data?.email),
+    [customIgn, setCustomIgn] = useState("");
 
   const
     joinLobby = async () => {
       if (!user.data) return;
       await setDoc(doc(firestore, "lobby", user.data.uid),
         {
-          displayName: user.data.displayName,
+          displayName: customIgn || user.data.displayName,
           email: user.data.email,
           uid: user.data.uid,
           ready: false
@@ -52,6 +54,12 @@ const Lobby = () => {
           ? count + 1
           : count
         , 0) || 0;
+    },
+    someoneHasSameIGN = (): boolean => {
+      if (!lobby.data || !user.data) return true;
+      const currentName = customIgn || user.data.displayName!;
+      for (const data of lobby.data) if (data.displayName === currentName) return true;
+      return false;
     };
 
   if (userInGame) {
@@ -62,7 +70,22 @@ const Lobby = () => {
     <Box padding="50px">
       {
         (user.data)
-          ? <Text fontSize="3xl">You: {user.data.displayName}, {user.data.email}, {user.data.uid}</Text>
+          ? (<>
+            <Text fontSize="3xl">You: {user.data.displayName}, {user.data.email}, {user.data.uid}</Text>
+            <Text fontSize="3xl">In-Game Name (IGN): <Input
+              fontSize="3xl"
+              color={userInLobby ? "green" : someoneHasSameIGN() ? "red" : "green"}
+              _placeholder={{ color: userInLobby ? "green" : someoneHasSameIGN() ? "red" : "green" }}
+              placeholder={customIgn || user.data.displayName!} style={{
+                width: "min(500px, 50vw)",
+                outline: "none",
+                border: "none"
+              }}
+              onChange={e => setCustomIgn(e.target.value)}
+              isDisabled={!!userInLobby}
+            />
+            </Text>
+          </>)
           : <Text fontSize="3xl">You're not logged in!</Text>
       }
       <br />
@@ -80,7 +103,13 @@ const Lobby = () => {
           )
           : (user.data)
             ? (
-              <Button onClick={joinLobby} fontSize="3xl" bgColor="blue" _hover={{ bgColor: "lightBlue" }}>Join Lobby</Button>
+              <Button
+                onClick={joinLobby}
+                fontSize="3xl"
+                bgColor="blue"
+                _hover={{ bgColor: "lightBlue" }}
+                isDisabled={someoneHasSameIGN()}
+              >Join Lobby</Button>
             ) : <></>
       }
       {

@@ -15,7 +15,8 @@ const KillSelector = () => {
     auth = useAuth(),
     firestore = useFirestore(),
     gamePlayersCollection = collection(firestore, "gamePlayers"),
-    gamePlayers = useFirestoreCollectionData(gamePlayersCollection);
+    gamePlayers = useFirestoreCollectionData(gamePlayersCollection),
+    [finalized, setFinalized] = useState(false);
 
   let ready = false;
   const
@@ -37,6 +38,7 @@ const KillSelector = () => {
       setDoc(doc(firestore, "gamePlayers", auth.currentUser!.uid), {
         selectedTarget
       }, { merge: true });
+      setFinalized(true);
     };
 
   let target = selectedTarget;
@@ -87,14 +89,14 @@ const KillSelector = () => {
         )
       }
       {
-        (allOthersSelected && selectedTarget != "$") ?
+        (allOthersSelected && selectedTarget != "$" && !finalized) ?
           <Button
             fontSize="6xl" padding="40px"
             bgColor="green"
             _hover={{ bgColor: "red" }}
             onClick={() => setSelectedTarget("$")}>
             Abstain</Button>
-          : (allOthersSelected)
+          : (selectedTarget == "$")
             ? <Button
               fontSize="6xl" padding="40px"
               bgColor="darkRed"
@@ -102,7 +104,7 @@ const KillSelector = () => {
               isDisabled>
               Abstain
             </Button>
-            : <></>
+            : <> </>
       }
       {
         (ready)
@@ -115,7 +117,7 @@ const KillSelector = () => {
             isDisabled>
             Finalize!</Button>
           : (target == undefined)
-            ? <></>
+            ? <> </>
             : <Button
               marginTop="25px"
               fontSize="6xl" padding="40px"

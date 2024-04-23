@@ -51,7 +51,7 @@ export const theme = extendTheme({
             button: {
                 color: "bg",
                 fontSize: "3xl"
-            }
+            },
         }
     }
 });
